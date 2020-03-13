@@ -1,18 +1,20 @@
-package org.firstinspires.ftc.teamcode.botcore.kinematics.mecanum;
+package org.firstinspires.ftc.teamcode.botcore.kinematics.actuation;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.botcore.binding.ActuatorBindingBase;
-import org.firstinspires.ftc.teamcode.botcore.framework.BotTaskManager;
+import org.firstinspires.ftc.teamcode.botcore.framework.BotManager;
 
 import java.util.List;
 
-class MecanumActuation extends ActuatorBindingBase {
+public class DriveActuation extends ActuatorBindingBase {
 
     private DcMotor mMotor1, mMotor2, mMotor3, mMotor4;
 
 
-    public MecanumActuation(BotTaskManager botmgr) {
+    public DriveActuation(BotManager botmgr) {
+
         super(botmgr);
     }
 
@@ -47,10 +49,13 @@ class MecanumActuation extends ActuatorBindingBase {
 
     @Override
     public void actuate(List<Double> power) {
-        mMotor1.setPower(power.get(0));
-        mMotor2.setPower(power.get(1));
-        mMotor3.setPower(power.get(2));
-        mMotor4.setPower(power.get(3));
+
+        opmode.telemetry.addData("powers: ", power);
+
+        mMotor1.setPower(Range.clip(power.get(0) , -1, 1));
+        mMotor2.setPower(Range.clip(power.get(1) , -1, 1));
+        mMotor3.setPower(Range.clip(power.get(2) , -1, 1));
+        mMotor4.setPower(Range.clip(power.get(3) , -1, 1));
     }
 
 }

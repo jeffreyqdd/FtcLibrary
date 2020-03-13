@@ -1,9 +1,10 @@
 package org.firstinspires.ftc.teamcode.botcore.binding;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.botcore.configuration.BotConfiguration;
-import org.firstinspires.ftc.teamcode.botcore.framework.BotTaskManager;
+import org.firstinspires.ftc.teamcode.botcore.framework.BotManager;
 import org.firstinspires.ftc.teamcode.botcore.utilities.LogUtils;
 
 import java.util.List;
@@ -13,16 +14,16 @@ public abstract class ActuatorBindingBase implements Actuator
 {
 	Logger logger = LogUtils.getLogger(SensorBindingBase.class.getName());
 	
-	protected BotTaskManager botmgr;
+	protected BotManager botmgr;
 	protected BotConfiguration config;
-	protected OpMode opmode;
+	protected LinearOpMode opmode;
 	
-	public ActuatorBindingBase(BotTaskManager botmgr)
+	public ActuatorBindingBase(BotManager botmgr)
 	{
 		super();
 
 		this.botmgr = botmgr;
-		this.config = botmgr.getConfig();
+		this.config = botmgr.getConfiguration();
 		this.opmode = botmgr.getOpMode();
 		
 		createActuators();

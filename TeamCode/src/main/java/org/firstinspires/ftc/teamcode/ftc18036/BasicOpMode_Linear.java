@@ -29,53 +29,92 @@
 
 package org.firstinspires.ftc.teamcode.ftc18036;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.teamcode.botcore.framework.BotManager;
+import org.firstinspires.ftc.teamcode.botcore.framework.Subsystem;
+import org.firstinspires.ftc.teamcode.botcore.subsystems.ControllerSubsystem;
+import org.firstinspires.ftc.teamcode.botcore.subsystems.DriveEncoderSensingSubsystem;
+import org.firstinspires.ftc.teamcode.botcore.subsystems.ImuSensingSubsystem;
+import org.firstinspires.ftc.teamcode.botcore.subsystems.MecanumChassisSubsystem;
+import org.firstinspires.ftc.teamcode.ftc18036.subsystem.DebuggingSubsystem;
 
+import java.util.HashSet;
 
 @TeleOp(name="Basic: Linear OpMode", group="Linear Opmode")
 //@Disabled
 public class BasicOpMode_Linear extends LinearOpMode {
 
-    DcMotor mTestMotor;
-
-
+    HashSet<Subsystem> queuedSystems = new HashSet<>();
+    BotManager bot;
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
+        bot = new BotManager(this);
 
-        mTestMotor = hardwareMap.get(DcMotor.class, "test motor");
-
-        mTestMotor.setDirection(DcMotor.Direction.FORWARD);
-
-        mTestMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-
-        mTestMotor.setTargetPosition(20000);
-        mTestMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        //mTestMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        createControllerSubsystem();
+        createEncoderSubsystem();
+        createChassisSubsystem();
+        createImuSubsystem();
+        createDebuggingSubsystem();
+        registerSubsystems();
 
 
         waitForStart();
 
-        //mTestMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        while (opModeIsActive()) {
-
-            //set power
-
-            mTestMotor.setPower(0.5);
+        bot.run();
+    }
 
 
+    private void registerSubsystems() {
+        int counter = 1;
 
-            telemetry.addData("Encoder Position", mTestMotor.getCurrentPosition());
+        for (Subsystem s : queuedSystems) {
+            telemetry.addData("Registering Subsystem - " + counter + "/" + queuedSystems.size(), s);
             telemetry.update();
+            counter++;
+
+            bot.addSubsystem(s);
 
         }
     }
+    private void createDebuggingSubsystem()
+    {
+        DebuggingSubsystem debuggingSubsystem = new DebuggingSubsystem("Debugging", bot, 30);
+        queuedSystems.add(debuggingSubsystem);
+    }
+    private void createChassisSubsystem()
+    {
+        MecanumChassisSubsystem mecanumChassisSubsystem = new MecanumChassisSubsystem("Mecanum chassis base", bot, 30);
+        queuedSystems.add(mecanumChassisSubsystem);
+    }
+
+    private void createEncoderSubsystem()
+    {
+        DriveEncoderSensingSubsystem driveEncoderSensingSubsystem = new DriveEncoderSensingSubsystem("Drive encoder sensing", bot, 1);
+        queuedSystems.add(driveEncoderSensingSubsystem);
+    }
+
+
+    private void createImuSubsystem()
+    {
+        ImuSensingSubsystem imuSensingSubsystem = new ImuSensingSubsystem("IMU sensing", bot, 1);
+        queuedSystems.add(imuSensingSubsystem);
+    }
+
+    private void createControllerSubsystem()
+    {
+        ControllerSubsystem controller;
+
+        controller = new ControllerSubsystem("Controller Sensing", bot, 22);
+        controller.setInvertYAxis(true);
+
+        controller.setLeftCurveX(ControllerSubsystem.JoystickScale.exponentialModerate);
+        controller.setLeftCurveY(ControllerSubsystem.JoystickScale.exponentialStrong);
+        controller.setRightCurveX(ControllerSubsystem.JoystickScale.linearHalf);
+        controller.setRightCurveY(ControllerSubsystem.JoystickScale.sigmoid);
+
+        queuedSystems.add(controller);
+    }
+
 }

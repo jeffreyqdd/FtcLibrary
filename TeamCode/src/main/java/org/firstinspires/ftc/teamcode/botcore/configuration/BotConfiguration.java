@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.botcore.configuration;
 
+import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
@@ -7,6 +8,14 @@ public class BotConfiguration
 {
 
 	public Kinematic kinematic;
+	public Sensing sensing;
+
+	public class Sensing
+	{
+		//in ms
+		public final long kEncoderInterval = 50;
+		public final long kImuInterval = 50;
+	}
 
 	public class Kinematic
 	{
@@ -16,9 +25,9 @@ public class BotConfiguration
 		//=====================================================
 		//motor names
 		public final String kMotor1 = "top left drive";
-		public final String kMotor2 = "top right drive";
+		public final String kMotor2 = "bottom left drive";
 		public final String kMotor3 = "bottom right drive";
-		public final String kMotor4 = "bottom left drive";
+		public final String kMotor4 = "top right drive";
 
 		//motor modes
 		public final DcMotor.RunMode kMode1 = DcMotor.RunMode.RUN_USING_ENCODER;
@@ -36,8 +45,6 @@ public class BotConfiguration
 		public final int kEncoderTicksPerRev = 560;
 		public final int kRevolutionsPerMinute = 312;
 
-
-
 		//=====================================================
 		//chassis information
 		//may need to change based off newer chassis or wheels
@@ -50,6 +57,8 @@ public class BotConfiguration
 		//kinematic values
 		public final double kLengthBetweenFrontWheels = 16;
 		public final double kLengthBetweenFrontAndRearWheels = 17;
+
+
 
 		//=====================================================
 		//pre-calculated values;
@@ -71,6 +80,28 @@ public class BotConfiguration
 		public final double kA = 0;
 		public final double kStatic = 0;
 
+
+		//=====================================================
+		//PID values
+		//may need to change based off newer chassis or wheels
+		//tuning is very important!!!
+		//=====================================================
+
+		public final double kTranslationalP = 1;
+		public final double kTranslationalI = 0;
+		public final double kTranslationalD = 0;
+
+		public final double kRotationalP = 1;
+		public final double kRotationalI = 0;
+		public final double kRotationalD = 0;
+
+		public final DriveConstraints kBaseConstraints = new DriveConstraints(
+				kMaxVel, kMaxVel * 0.2, 0.0,
+				Math.toRadians(180.0), Math.toRadians(180.0) * 0.2, 0.0
+		);
+
+
+
 		//=====================================================
 		//Important methods associated with drive train kinematics
 		//DO NOT TOUCH WITHOUT GOOD REASON
@@ -79,10 +110,14 @@ public class BotConfiguration
 		{
 			return kWheelRadius * 2 * Math.PI * ticks / kEncoderTicksPerRev;
 		}
-
+		public double encoderTicksToInches(double ticks)
+		{
+			return kWheelRadius * 2 * Math.PI * ticks / kEncoderTicksPerRev;
+		}
 	}
 
 	public BotConfiguration(){
 		kinematic = new Kinematic();
+		sensing = new Sensing();
 	}
 }
