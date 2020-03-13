@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.botcore.subsystems;
+package org.firstinspires.ftc.teamcode.ftc18036.subsystem;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -33,7 +33,7 @@ public class MecanumChassisSubsystem extends Subsystem {
     @Override
     public void execute() {
 
-        //mecanum.tickWhileBusy();
-        mecanum.setMotorPowers(0,0,0, botManager.getMeasurementPackage().gamepad1.leftStickY + botManager.getMeasurementPackage().gamepad1.rightStickY);
+        mecanum.tickWhileBusy();
+        //mecanum.setMotorPowers(0,0,0, botManager.getMeasurementPackage().gamepad1.leftStickY + botManager.getMeasurementPackage().gamepad1.rightStickY);
     }
 }
